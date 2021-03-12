@@ -85,7 +85,7 @@ class PageFilterManager implements PageFilterManagerInterface
                 Assert::assertTargetCallableHasArrayTargetArgumentAsReference($targetCallback);
             }
             $formData = $form->getData();
-            Assert::assertTargetCallableHasRightArguments($targetCallback, $target, $formData);
+            Assert::assertTargetCallableHasRightTypeHintedArguments($targetCallback, $target, $formData);
             $targetCallback($target, $formData, $form);
         }
         foreach ($form->all() as $child) {

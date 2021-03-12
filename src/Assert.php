@@ -34,7 +34,7 @@ class Assert
      * @param mixed $target
      * @param mixed $formData
      */
-    public static function assertTargetCallableHasRightArguments(
+    public static function assertTargetCallableHasRightTypeHintedArguments(
         callable $targetCallback,
         $target,
         $formData
@@ -53,7 +53,7 @@ class Assert
             // @phpstan-ignore-next-line
             ($targetParamType = $targetParam->getType()) !== null && \get_debug_type($target) !== $targetParamType->getName()
         ) {
-            throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument type-hinted as "%s"', TargetCallbackExtension::NAME, get_debug_type($target)));
+            throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($target)));
         }
         if (
         $formDataParam->hasType() &&
@@ -62,7 +62,7 @@ class Assert
             // @phpstan-ignore-next-line
             ($formDataParamType = $formDataParam->getType()) !== null && \get_debug_type($formData) !== $formDataParamType->getName()
         ) {
-            throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument type-hinted as "%s"', TargetCallbackExtension::NAME, get_debug_type($formData)));
+            throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($formData)));
         }
         if (null !== $formParam) {
             if (
