@@ -1,0 +1,77 @@
+name: page-filter-form-bundle-CI
+on:
+  [push, pull_request]
+jobs:
+  build-php-7-4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - uses: actions/checkout@v2
+      - name: composer install
+        run: composer install
+
+  build-php-8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: composer install
+        run: composer install
+
+  check-code-php-7-4:
+    runs-on: ubuntu-latest
+    needs: [ build-php-7-4 ]
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - uses: actions/checkout@v2
+      - name: composer install
+        run: composer install
+
+      - name: cs-check
+        run: composer cs-check
+
+      - name: phpstan
+        run: composer phpstan
+
+  check-code-php-8:
+    runs-on: ubuntu-latest
+    needs: [ build-php-8 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: composer install
+        run: composer install
+
+      - name: cs-check
+        run: composer cs-check
+
+      - name: phpstan
+        run: composer phpstan
+
+  tests-php-7-4:
+    runs-on: ubuntu-latest
+    needs: [ build-php-7-4 ]
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - uses: actions/checkout@v2
+
+      - name: composer install
+        run: composer install
+
+      - name: phpunit
+        run: composer phpunit
+
+  tests-php-8:
+    runs-on: ubuntu-latest
+    needs: [ build-php-8 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: composer install
+        run: composer install
+
+      - name: phpunit
+        run: composer phpunit
