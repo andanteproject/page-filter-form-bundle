@@ -12,6 +12,7 @@ use Andante\PageFilterFormBundle\Tests\Form\DumbObjectPageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint1PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint2PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint3PageFilterType;
+use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHintNoNullableArgs2PageFilterType;
 use Andante\PageFilterFormBundle\Tests\KernelTestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +43,45 @@ class PageFilterManagerTest extends KernelTestCase
         self::assertInstanceOf(FormInterface::class, $form);
         self::assertEquals('newCriteriaSearch1', $fakeQueryBuilder->criteriaSearch1);
         self::assertEquals('newCriteriaSearch2', $fakeQueryBuilder->criteriaSearch2);
+    }
+
+    public function testCreateAndHandleFilterWithObjectNullArgs(): void
+    {
+        /** @var PageFilterManagerInterface $filterManager */
+        $filterManager = self::$container->get(PageFilterManager::class);
+        $fakeQueryBuilder = new \stdClass();
+        $fakeQueryBuilder->criteriaSearch1 = null;
+        $fakeQueryBuilder->criteriaSearch2 = null;
+        $form = $filterManager->createAndHandleFilter(
+            DumbObjectPageFilterType::class,
+            $fakeQueryBuilder,
+            Request::create('/', 'GET', [
+                'child1' => null,
+                'child2' => null,
+            ])
+        );
+        self::assertInstanceOf(FormInterface::class, $form);
+        self::assertEquals(null, $fakeQueryBuilder->criteriaSearch1);
+        self::assertEquals(null, $fakeQueryBuilder->criteriaSearch2);
+    }
+
+    public function testCreateAndHandleFilterWithObjectNullArgsWithNoNullableArgs2(): void
+    {
+        /** @var PageFilterManagerInterface $filterManager */
+        $filterManager = self::$container->get(PageFilterManager::class);
+        $fakeQueryBuilder = new \stdClass();
+        $fakeQueryBuilder->criteriaSearch1 = null;
+        $fakeQueryBuilder->criteriaSearch2 = null;
+        $this->expectException(TargetCallableArgumentException::class);
+        $this->expectExceptionMessage('must have second argument nullable');
+        $filterManager->createAndHandleFilter(
+            DumbObjectWrongTypeHintNoNullableArgs2PageFilterType::class,
+            $fakeQueryBuilder,
+            Request::create('/', 'GET', [
+                'child1' => null,
+                'child2' => null,
+            ])
+        );
     }
 
     public function testCreateAndHandleFilterWithObjectNotEnoughParameters(): void

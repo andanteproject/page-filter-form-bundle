@@ -46,24 +46,38 @@ class Assert
         $targetParam = $params[0];
         $formDataParam = $params[1];
         $formParam = $params[2] ?? null;
+
+        // Checking $target argument
+        if (null === $target && !$targetParam->allowsNull()) {
+            throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument nullable', TargetCallbackExtension::NAME));
+        }
+
         if (
+        null !== $target &&
         $targetParam->hasType() &&
-        null !== $targetParam->getClass() ?
+        (null !== $targetParam->getClass() ?
             !\is_a($target, $targetParam->getClass()->getName(), true) :
             // @phpstan-ignore-next-line
-            ($targetParamType = $targetParam->getType()) !== null && \get_debug_type($target) !== $targetParamType->getName()
-        ) {
+            ($targetParamType = $targetParam->getType()) !== null && \get_debug_type($target) !== $targetParamType->getName())) {
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($target)));
         }
+
+        // Checking $formData argument
+        if (null === $formData && !$formDataParam->allowsNull()) {
+            throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument nullable', TargetCallbackExtension::NAME));
+        }
+
         if (
+        null !== $formData &&
         $formDataParam->hasType() &&
-        null !== $formDataParam->getClass() ?
+        (null !== $formDataParam->getClass() ?
             !\is_a($formData, $formDataParam->getClass()->getName(), true) :
             // @phpstan-ignore-next-line
-            ($formDataParamType = $formDataParam->getType()) !== null && \get_debug_type($formData) !== $formDataParamType->getName()
-        ) {
+            ($formDataParamType = $formDataParam->getType()) !== null && \get_debug_type($formData) !== $formDataParamType->getName())) {
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($formData)));
         }
+
+        // Checking $form argument
         if (null !== $formParam) {
             if (
                 $formParam->hasType() &&
