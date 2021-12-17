@@ -20,7 +20,7 @@ class SetUpTest extends KernelTestCase
     public function testDependencyInjection(): void
     {
         /** @var DumbService $dumbService */
-        $dumbService = self::$container->get(DumbService::class);
+        $dumbService = self::getContainer()->get(DumbService::class);
         $rProperty = new \ReflectionProperty($dumbService, 'pageFilterManager');
         $rProperty->setAccessible(true);
         $filterManager = $rProperty->getValue($dumbService);

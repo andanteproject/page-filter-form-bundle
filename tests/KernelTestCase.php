@@ -11,7 +11,7 @@ class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
 {
     protected function getFormFactory(): FormFactoryInterface
     {
-        $container = self::$container;
+        $container = self::getContainer();
         /** @var FormFactoryInterface $formFactory */
         $formFactory = $container->get('form.factory');
 

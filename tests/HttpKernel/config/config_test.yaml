@@ -2,6 +2,9 @@ parameters:
   kernel.secret: "secret"
   locale: "en"
 
+framework:
+  test: true
+
 services:
   _defaults:
     public: true
