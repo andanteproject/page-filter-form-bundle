@@ -52,13 +52,14 @@ class Assert
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument nullable', TargetCallbackExtension::NAME));
         }
 
+        $targetParamClass = $targetParam->getType() && !$targetParam->getType()->isBuiltin() ? new \ReflectionClass($targetParam->getType()->getName()) : null;
         if (
-        null !== $target &&
-        $targetParam->hasType() &&
-        (null !== $targetParam->getClass() ?
-            !\is_a($target, $targetParam->getClass()->getName(), true) :
-            // @phpstan-ignore-next-line
-            ($targetParamType = $targetParam->getType()) !== null && \get_debug_type($target) !== $targetParamType->getName())) {
+            null !== $target
+            && $targetParam->hasType()
+            && (null !== $targetParamClass ?
+                !\is_a($target, $targetParamClass->getName(), true) :
+                // @phpstan-ignore-next-line
+                ($targetParamType = $targetParam->getType()) !== null && \get_debug_type($target) !== $targetParamType->getName())) {
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($target)));
         }
 
@@ -67,23 +68,25 @@ class Assert
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument nullable', TargetCallbackExtension::NAME));
         }
 
+        $formDataParamClass = $formDataParam->getType() && !$formDataParam->getType()->isBuiltin() ? new \ReflectionClass($formDataParam->getType()->getName()) : null;
         if (
-        null !== $formData &&
-        $formDataParam->hasType() &&
-        (null !== $formDataParam->getClass() ?
-            !\is_a($formData, $formDataParam->getClass()->getName(), true) :
-            // @phpstan-ignore-next-line
-            ($formDataParamType = $formDataParam->getType()) !== null && \get_debug_type($formData) !== $formDataParamType->getName())) {
+            null !== $formData
+            && $formDataParam->hasType()
+            && (null !== $formDataParamClass ?
+                !\is_a($formData, $formDataParamClass->getName(), true) :
+                // @phpstan-ignore-next-line
+                ($formDataParamType = $formDataParam->getType()) !== null && \get_debug_type($formData) !== $formDataParamType->getName())) {
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($formData)));
         }
 
         // Checking $form argument
         if (null !== $formParam) {
+            $formParamClass = $formParam->getType() && !$formParam->getType()->isBuiltin() ? new \ReflectionClass($formParam->getType()->getName()) : null;
             if (
-                $formParam->hasType() &&
-                (
-                    null === $formParam->getClass() ||
-                    !\is_a($formParam->getClass()->getName(), FormInterface::class, true)
+                $formParam->hasType()
+                && (
+                    null === $formParamClass
+                    || !\is_a($formParamClass->getName(), FormInterface::class, true)
                 )
             ) {
                 throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have third argument type-hinted as "%s"', TargetCallbackExtension::NAME, FormInterface::class));
