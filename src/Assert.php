@@ -52,14 +52,7 @@ class Assert
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument nullable', TargetCallbackExtension::NAME));
         }
 
-        $targetParamClass = $targetParam->getType() && !$targetParam->getType()->isBuiltin() ? new \ReflectionClass($targetParam->getType()->getName()) : null;
-        if (
-            null !== $target
-            && $targetParam->hasType()
-            && (null !== $targetParamClass ?
-                !\is_a($target, $targetParamClass->getName(), true) :
-                // @phpstan-ignore-next-line
-                ($targetParamType = $targetParam->getType()) !== null && \get_debug_type($target) !== $targetParamType->getName())) {
+        if (!self::callableAcceptsValue($r, 0, $target)) {
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have first argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($target)));
         }
 
@@ -68,20 +61,19 @@ class Assert
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument nullable', TargetCallbackExtension::NAME));
         }
 
-        $formDataParamClass = $formDataParam->getType() && !$formDataParam->getType()->isBuiltin() ? new \ReflectionClass($formDataParam->getType()->getName()) : null;
-        if (
-            null !== $formData
-            && $formDataParam->hasType()
-            && (null !== $formDataParamClass ?
-                !\is_a($formData, $formDataParamClass->getName(), true) :
-                // @phpstan-ignore-next-line
-                ($formDataParamType = $formDataParam->getType()) !== null && \get_debug_type($formData) !== $formDataParamType->getName())) {
+        if (!self::callableAcceptsValue($r, 1, $formData)) {
             throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have second argument type-hinted as "%s"', TargetCallbackExtension::NAME, \get_debug_type($formData)));
         }
 
         // Checking $form argument
         if (null !== $formParam) {
-            $formParamClass = $formParam->getType() && !$formParam->getType()->isBuiltin() ? new \ReflectionClass($formParam->getType()->getName()) : null;
+            $formParamClass = null;
+            $formParamType = $formParam->getType();
+            if ($formParamType instanceof \ReflectionNamedType) {
+                /** @var class-string<object> $formParamTypeName */
+                $formParamTypeName = $formParamType->getName();
+                $formParamClass = !$formParamType->isBuiltin() ? new \ReflectionClass($formParamTypeName) : null;
+            }
             if (
                 $formParam->hasType()
                 && (
@@ -92,5 +84,59 @@ class Assert
                 throw new TargetCallableArgumentException(\sprintf('Callable for option "%s" must have third argument type-hinted as "%s"', TargetCallbackExtension::NAME, FormInterface::class));
             }
         }
+    }
+
+    /**
+     * @param mixed $paramValue
+     */
+    protected static function callableAcceptsValue(\ReflectionFunction $r, int $paramPosition, $paramValue): bool
+    {
+        foreach ($r->getParameters() as $parameter) {
+            if ($parameter->getPosition() !== $paramPosition) {
+                continue;
+            }
+
+            $type = $parameter->getType();
+            if ($type instanceof \ReflectionNamedType) {
+                return self::isCompatibleWithType($type->getName(), $paramValue) || ($type->allowsNull() && \is_null($paramValue));
+            }
+
+            if (\version_compare(PHP_VERSION, '8.0.0') >= 0 && $type instanceof \ReflectionUnionType) {
+                foreach ($type->getTypes() as $t) {
+                    if (self::isCompatibleWithType($t->getName(), $paramValue) || ($t->allowsNull() && \is_null($paramValue))) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            if (\version_compare(PHP_VERSION, '8.1.0') >= 0 && $type instanceof \ReflectionIntersectionType) {
+                foreach ($type->getTypes() as $t) {
+                    if (!self::isCompatibleWithType($t->getName(), $paramValue)) { /* intersection types do not support nullables for now */
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param mixed|object $value
+     */
+    protected static function isCompatibleWithType(string $type, $value): bool
+    {
+        if (\is_object($value)) {
+            // @phpstan-ignore-next-line
+            return \get_class($value) === $type || \is_subclass_of($value, $type);
+        }
+
+        return \gettype($value) === $type;
     }
 }

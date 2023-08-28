@@ -18,7 +18,7 @@ interface PageFilterManagerInterface
     public function createAndHandleFilter(
         string $formType,
         &$target,
-        ?Request $request = null,
+        Request $request = null,
         $data = null,
         array $options = [],
         string $formName = ''

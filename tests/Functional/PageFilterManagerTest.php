@@ -7,8 +7,10 @@ use Andante\PageFilterFormBundle\PageFilterManager;
 use Andante\PageFilterFormBundle\PageFilterManagerInterface;
 use Andante\PageFilterFormBundle\Tests\Form\DumbArrayByValuePageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbArrayPageFilterType;
+use Andante\PageFilterFormBundle\Tests\Form\DumbObjectIntersectionTypeHint1PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectNotEnoughParametersPageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectPageFilterType;
+use Andante\PageFilterFormBundle\Tests\Form\DumbObjectUnionTypeHint1PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint1PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint2PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint3PageFilterType;
@@ -133,6 +135,46 @@ class PageFilterManagerTest extends KernelTestCase
                 'child1' => 'newCriteriaSearch1',
             ])
         );
+    }
+
+    public function testCreateAndHandleFilterWithObjectUnionTypeHint1(): void
+    {
+        if (\version_compare(PHP_VERSION, '8.0.0') >= 0) {
+            /** @var PageFilterManagerInterface $filterManager */
+            $filterManager = self::getContainer()->get(PageFilterManager::class);
+            $fakeQueryBuilder = new \stdClass();
+            $this->expectException(TargetCallableArgumentException::class);
+            $this->expectExceptionMessage('argument type-hinted');
+            $filterManager->createAndHandleFilter(
+                DumbObjectUnionTypeHint1PageFilterType::class,
+                $fakeQueryBuilder,
+                Request::create('/', 'GET', [
+                    'child1' => 'newCriteriaSearch1',
+                ])
+            );
+        } else {
+            self::assertEquals(true, true);
+        }
+    }
+
+    public function testCreateAndHandleFilterWithObjectIntersectionTypeHint1(): void
+    {
+        if (\version_compare(PHP_VERSION, '8.1.0') >= 0) {
+            /** @var PageFilterManagerInterface $filterManager */
+            $filterManager = self::getContainer()->get(PageFilterManager::class);
+            $fakeQueryBuilder = new \stdClass();
+            $this->expectException(TargetCallableArgumentException::class);
+            $this->expectExceptionMessage('argument type-hinted');
+            $filterManager->createAndHandleFilter(
+                DumbObjectIntersectionTypeHint1PageFilterType::class,
+                $fakeQueryBuilder,
+                Request::create('/', 'GET', [
+                    'child1' => 'newCriteriaSearch1',
+                ])
+            );
+        } else {
+            self::assertEquals(true, true);
+        }
     }
 
     public function testCreateAndHandleFilterWithObjectWrongTypeHint3(): void
