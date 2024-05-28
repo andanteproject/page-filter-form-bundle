@@ -137,6 +137,11 @@ class Assert
             return \get_class($value) === $type || \is_subclass_of($value, $type);
         }
 
-        return \gettype($value) === $type;
+        $gettype = \gettype($value);
+        if ('boolean' === $gettype) {
+            $gettype = 'bool';
+        }
+
+        return $gettype === $type;
     }
 }
