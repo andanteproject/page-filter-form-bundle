@@ -19,14 +19,13 @@ class PageFilterManager implements PageFilterManagerInterface
     }
 
     /**
-     * @param mixed      $target
-     * @param Request    $request
+     * @param mixed $target
      * @param mixed|null $data
      */
     public function createAndHandleFilter(
         string $formType,
         &$target,
-        Request $request = null,
+        ?Request $request = null,
         $data = null,
         array $options = [],
         string $formName = ''
@@ -43,8 +42,8 @@ class PageFilterManager implements PageFilterManagerInterface
     }
 
     /**
-     * @param mixed                $data
      * @param array<string, mixed> $options
+     * @param mixed|null           $data
      */
     public function createFilter(
         string $formType,
@@ -73,9 +72,6 @@ class PageFilterManager implements PageFilterManagerInterface
         }
     }
 
-    /**
-     * @param mixed $target
-     */
     public function applyFilterTargetCallbacks(FormInterface $form, &$target): void
     {
         /** @var callable|null $targetCallback */

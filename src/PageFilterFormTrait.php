@@ -12,7 +12,7 @@ trait PageFilterFormTrait
     protected PageFilterManagerInterface $pageFilterManager;
 
     /**
-     * @param mixed                $target
+     * @param mixed           $target
      * @param mixed|null           $data
      * @param array<string, mixed> $options
      */

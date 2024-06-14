@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 interface PageFilterManagerInterface
 {
     /**
-     * @param mixed                $target
+     * @param mixed           $target
      * @param mixed|null           $data
      * @param array<string, mixed> $options
      * @param ?Request             $request
@@ -18,7 +18,7 @@ interface PageFilterManagerInterface
     public function createAndHandleFilter(
         string $formType,
         &$target,
-        Request $request = null,
+        ?Request $request = null,
         $data = null,
         array $options = [],
         string $formName = ''
