@@ -103,8 +103,10 @@ class Assert
 
             if (\version_compare(PHP_VERSION, '8.0.0') >= 0 && $type instanceof \ReflectionUnionType) {
                 foreach ($type->getTypes() as $t) {
-                    if (self::isCompatibleWithType($t->getName(), $paramValue) || ($t->allowsNull() && \is_null($paramValue))) {
-                        return true;
+                    if($t instanceof \ReflectionNamedType) {
+                        if (self::isCompatibleWithType($t->getName(), $paramValue) || ($t->allowsNull() && \is_null($paramValue))) {
+                            return true;
+                        }
                     }
                 }
 
@@ -113,8 +115,10 @@ class Assert
 
             if (\version_compare(PHP_VERSION, '8.1.0') >= 0 && $type instanceof \ReflectionIntersectionType) {
                 foreach ($type->getTypes() as $t) {
-                    if (!self::isCompatibleWithType($t->getName(), $paramValue)) { /* intersection types do not support nullables for now */
-                        return false;
+                    if($t instanceof \ReflectionNamedType) {
+                        if (!self::isCompatibleWithType($t->getName(), $paramValue)) { /* intersection types do not support nullables for now */
+                            return false;
+                        }
                     }
                 }
 
