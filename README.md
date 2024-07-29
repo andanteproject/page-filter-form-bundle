@@ -37,7 +37,7 @@ return [
 ];
 ```
 
-This should have been done automagically if you are using [Symfony Flex](https://flex.symfony.com). Otherwise, just
+This should have been done automagically if you are using [Symfony Flex](https://symfony.com/components/Symfony%20Flex). Otherwise, just
 register it by yourself.
 
 ## The problem
