@@ -25,6 +25,7 @@ class AndanteSmartFormAttrExtension extends AbstractTypeExtension
                 $view->vars['attr']['id'] = $this->getFormId($view);
             }
         } elseif ($form->getRoot()->getConfig()->getOption('andante_smart_form_attr', false)) {
+            \assert(null !== $view->parent, 'Non root forms are expected to have a parent');
             $view->vars['attr'] = \array_merge($view->vars['attr'], [
                 'form' => $this->getRootView($view->parent)->vars['attr']['id'],
             ]);

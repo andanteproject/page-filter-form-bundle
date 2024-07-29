@@ -142,8 +142,13 @@ class Assert
         }
 
         $gettype = \gettype($value);
+
         if ('boolean' === $gettype) {
-            $gettype = 'bool';
+            return 'bool' === $type;
+        }
+
+        if ('integer' === $gettype) {
+            return 'int' === $type;
         }
 
         return $gettype === $type;
