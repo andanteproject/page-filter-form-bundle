@@ -26,7 +26,7 @@ class DumbObjectPageFilterType extends AbstractType
         ]);
     }
 
-    public function getParent()
+    public function getParent(): ?string
     {
         return PageFilterType::class;
     }

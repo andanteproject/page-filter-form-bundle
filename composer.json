@@ -26,10 +26,10 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "symfony/form": "^4.0 || ^5.0 || ^6.0 || ^7.0"
+        "symfony/form": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0"
     },
     "require-dev": {
-        "symfony/framework-bundle": "^4.0 | ^5.0 | ^6.0 | ^7.0",
+        "symfony/framework-bundle": "^4.0 | ^5.0 | ^6.0 | ^7.0 | ^8.0",
         "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^9.6",
         "phpstan/phpstan": "^1.11",
