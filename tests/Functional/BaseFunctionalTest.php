@@ -7,6 +7,7 @@ namespace Andante\PageFilterFormBundle\Tests\Functional;
 use Andante\PageFilterFormBundle\PageFilterManagerInterface;
 use Andante\PageFilterFormBundle\Tests\App\PageFilterFormAppKernel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 abstract class BaseFunctionalTest extends KernelTestCase
@@ -27,9 +28,24 @@ abstract class BaseFunctionalTest extends KernelTestCase
         return PageFilterFormAppKernel::class;
     }
 
+    /**
+     * Return the test container. Uses KernelTestCase::getContainer() on Symfony 5.3+,
+     * or the kernel's container on 4.4 (avoids overriding getContainer() and return-type conflicts).
+     */
+    protected static function getTestContainer(): ContainerInterface
+    {
+        if (method_exists(KernelTestCase::class, 'getContainer')) {
+            return parent::getContainer();
+        }
+        $kernel = static::$kernel;
+        \assert($kernel !== null, 'Kernel must be booted');
+
+        return $kernel->getContainer();
+    }
+
     protected function getFormFactory(): FormFactoryInterface
     {
-        $container = self::getContainer();
+        $container = self::getTestContainer();
         /** @var FormFactoryInterface $formFactory */
         $formFactory = $container->get('form.factory');
 
@@ -38,7 +54,7 @@ abstract class BaseFunctionalTest extends KernelTestCase
 
     protected function getPageFilterManager(): PageFilterManagerInterface
     {
-        $container = self::getContainer();
+        $container = self::getTestContainer();
         /** @var PageFilterManagerInterface $manager */
         $manager = $container->get(PageFilterManagerInterface::class);
 

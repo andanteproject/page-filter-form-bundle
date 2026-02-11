@@ -14,7 +14,7 @@ class SetUpTest extends BaseFunctionalTest
 {
     public function testDependencyInjection(): void
     {
-        $container = self::getContainer();
+        $container = self::getTestContainer();
 
         $filterManager = $container->get(PageFilterManagerInterface::class);
         self::assertInstanceOf(PageFilterManagerInterface::class, $filterManager);

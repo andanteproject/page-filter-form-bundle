@@ -11,23 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.4', '8.5']
-        symfony-version: ['4.4.*', '5.4.*', '6.4.*', '7.0.*', '8.0.*']
-        exclude:
-          # Symfony 6.4+ requires PHP 8.2+
+        # Explicit PHP × Symfony pairs (each LTS/minor tested with a compatible PHP)
+        include:
           - php-version: '7.4'
-            symfony-version: '6.4.*'
-          - php-version: '7.4'
-            symfony-version: '7.0.*'
-          - php-version: '7.4'
-            symfony-version: '8.0.*'
-          # Symfony 4.4 / 5.4 are not compatible with PHP 8.5
-          - php-version: '8.5'
             symfony-version: '4.4.*'
-          - php-version: '8.5'
+          - php-version: '7.4'
             symfony-version: '5.4.*'
+          - php-version: '8.2'
+            symfony-version: '6.4.*'
+          - php-version: '8.5'
+            symfony-version: '7.0.*'
+          - php-version: '8.5'
+            symfony-version: '8.0.*'
 
-    name: PHP v${{ matrix.php-version }} - SF v${{ matrix.symfony-version }}
+    name: PHP ${{ matrix.php-version }} · SF ${{ matrix.symfony-version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +39,11 @@ jobs:
       - name: Constrain Symfony version
         run: |
           sed -ri 's/"symfony\/([^"]+)": "[^"]+"/"symfony\/\1": "${{ matrix.symfony-version }}"/g' composer.json
+
+      - name: Relax php-cs-fixer for Symfony 4.4
+        if: matrix.symfony-version == '4.4.*'
+        run: |
+          sed -ri 's/"friendsofphp\/php-cs-fixer": "\^3\.58"/"friendsofphp\/php-cs-fixer": "\^3.0"/' composer.json
 
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3
