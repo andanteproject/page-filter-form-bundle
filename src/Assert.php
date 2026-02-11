@@ -103,7 +103,7 @@ class Assert
 
             if (\version_compare(PHP_VERSION, '8.0.0') >= 0 && $type instanceof \ReflectionUnionType) {
                 foreach ($type->getTypes() as $t) {
-                    if($t instanceof \ReflectionNamedType) {
+                    if ($t instanceof \ReflectionNamedType) {
                         if (self::isCompatibleWithType($t->getName(), $paramValue) || ($t->allowsNull() && \is_null($paramValue))) {
                             return true;
                         }
@@ -115,7 +115,7 @@ class Assert
 
             if (\version_compare(PHP_VERSION, '8.1.0') >= 0 && $type instanceof \ReflectionIntersectionType) {
                 foreach ($type->getTypes() as $t) {
-                    if($t instanceof \ReflectionNamedType) {
+                    if ($t instanceof \ReflectionNamedType) {
                         if (!self::isCompatibleWithType($t->getName(), $paramValue)) { /* intersection types do not support nullables for now */
                             return false;
                         }
@@ -137,7 +137,6 @@ class Assert
     protected static function isCompatibleWithType(string $type, $value): bool
     {
         if (\is_object($value)) {
-            // @phpstan-ignore-next-line
             return \get_class($value) === $type || \is_subclass_of($value, $type);
         }
 
