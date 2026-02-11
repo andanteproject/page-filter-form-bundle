@@ -6,7 +6,7 @@ $config->setRiskyAllowed(true);
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
-    ->exclude('var')
+    ->exclude(['var', 'vendor', 'vendor85'])
 ;
 
 $config->setFinder($finder);

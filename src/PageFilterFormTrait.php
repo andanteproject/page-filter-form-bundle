@@ -6,7 +6,6 @@ namespace Andante\PageFilterFormBundle;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\Service\Attribute\Required;
 
 trait PageFilterFormTrait
 {
@@ -35,7 +34,9 @@ trait PageFilterFormTrait
         );
     }
 
-    #[Required]
+    /**
+     * @required
+     */
     public function setPageFilterManager(PageFilterManagerInterface $pageFilterManager): void
     {
         $this->pageFilterManager = $pageFilterManager;

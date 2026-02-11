@@ -11,4 +11,7 @@ composer.lock
 !bin/console
 !bin/symfony_requirements
 /vendor/
+/vendor85/
 /phpunit.xml
+docker-compose.override.yml
+coverage.xml

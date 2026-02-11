@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Andante\PageFilterFormBundle\Tests\Form\Extension;
 
 use Andante\PageFilterFormBundle\Tests\KernelTestCase;
@@ -7,12 +9,6 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class AndanteSmartFormAttrExtensionTest extends KernelTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        self::bootKernel();
-    }
-
     public function testExtensionOff(): void
     {
         $builder = $this->getFormFactory()->createNamedBuilder('main', FormType::class);

@@ -1,5 +1,5 @@
 parameters:
     level: 8
-    ignoreErrors:
-        -
-            identifier: missingType.iterableValue
+    excludePaths:
+        # Union type in closure (PHP 8+ only); exclude so PHPStan doesn't require ignore
+        - tests/Form/DumbObjectUnionTypeHint1PageFilterType.php

@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.5']
+        symfony-version: ['4.4.*', '5.4.*', '6.4.*', '7.0.*', '8.0.*']
+        exclude:
+          # Symfony 6.4+ requires PHP 8.2+
+          - php-version: '7.4'
+            symfony-version: '6.4.*'
+          - php-version: '7.4'
+            symfony-version: '7.0.*'
+          - php-version: '7.4'
+            symfony-version: '8.0.*'
+          # Symfony 4.4 / 5.4 are not compatible with PHP 8.5
+          - php-version: '8.5'
+            symfony-version: '4.4.*'
+          - php-version: '8.5'
+            symfony-version: '5.4.*'
+
+    name: PHP v${{ matrix.php-version }} - SF v${{ matrix.symfony-version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, xml, ctype, iconv, intl, json
+          coverage: ${{ matrix.php-version == '8.5' && matrix.symfony-version == '8.0.*' && 'pcov' || 'none' }}
+
+      - name: Constrain Symfony version
+        run: |
+          sed -ri 's/"symfony\/([^"]+)": "[^"]+"/"symfony\/\1": "${{ matrix.symfony-version }}"/g' composer.json
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--prefer-dist --no-progress --no-interaction --optimize-autoloader"
+
+      - name: Run PHP-CS-Fixer
+        if: matrix.php-version == '8.5' && matrix.symfony-version == '8.0.*'
+        run: vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation --using-cache=no
+
+      - name: Run PHPStan
+        if: matrix.php-version == '8.5' && matrix.symfony-version == '8.0.*'
+        run: vendor/bin/phpstan analyse src tests --configuration=phpstan.neon --memory-limit=1G
+
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit ${{ matrix.php-version == '8.5' && matrix.symfony-version == '8.0.*' && '--coverage-clover coverage.xml' || '' }}
+
+      - name: Upload coverage to Codecov
+        if: matrix.php-version == '8.5' && matrix.symfony-version == '8.0.*'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false

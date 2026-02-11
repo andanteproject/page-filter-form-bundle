@@ -4,22 +4,8 @@ declare(strict_types=1);
 
 namespace Andante\PageFilterFormBundle\Tests;
 
-use Andante\PageFilterFormBundle\Tests\HttpKernel\AndantePageFilterFormKernel;
-use Symfony\Component\Form\FormFactoryInterface;
+use Andante\PageFilterFormBundle\Tests\Functional\BaseFunctionalTest;
 
-class KernelTestCase extends \Symfony\Bundle\FrameworkBundle\Test\KernelTestCase
+class KernelTestCase extends BaseFunctionalTest
 {
-    protected function getFormFactory(): FormFactoryInterface
-    {
-        $container = self::getContainer();
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = $container->get('form.factory');
-
-        return $formFactory;
-    }
-
-    protected static function getKernelClass(): string
-    {
-        return AndantePageFilterFormKernel::class;
-    }
 }

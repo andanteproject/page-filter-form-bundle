@@ -5,26 +5,34 @@ declare(strict_types=1);
 namespace Andante\PageFilterFormBundle\Tests\Functional;
 
 use Andante\PageFilterFormBundle\PageFilterManagerInterface;
-use Andante\PageFilterFormBundle\Tests\KernelTestCase;
+use Andante\PageFilterFormBundle\Tests\Form\DumbObjectPageFilterType;
 use Andante\PageFilterFormBundle\Tests\Services\DumbService;
-use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class SetUpTest extends KernelTestCase
+class SetUpTest extends BaseFunctionalTest
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        self::bootKernel();
-    }
-
     public function testDependencyInjection(): void
     {
-        /** @var DumbService $dumbService */
-        $dumbService = self::getContainer()->get(DumbService::class);
-        $rProperty = new \ReflectionProperty($dumbService, 'pageFilterManager');
-        $filterManager = $rProperty->getValue($dumbService);
+        $container = self::getContainer();
+
+        $filterManager = $container->get(PageFilterManagerInterface::class);
         self::assertInstanceOf(PageFilterManagerInterface::class, $filterManager);
-        $rProperty = new \ReflectionProperty($filterManager, 'formFactory');
-        self::assertInstanceOf(FormFactoryInterface::class, $rProperty->getValue($filterManager));
+
+        $dumbService = $container->get(DumbService::class);
+        self::assertInstanceOf(DumbService::class, $dumbService);
+
+        // Verify DumbService has a working PageFilterManager by using it
+        $target = new \stdClass();
+        $target->criteriaSearch1 = null;
+        $target->criteriaSearch2 = null;
+        $form = $dumbService->createAndHandleFilter(
+            DumbObjectPageFilterType::class,
+            $target,
+            Request::create('/', 'GET', ['child1' => 'a', 'child2' => 'b'])
+        );
+        self::assertInstanceOf(FormInterface::class, $form);
+        self::assertSame('a', $target->criteriaSearch1);
+        self::assertSame('b', $target->criteriaSearch2);
     }
 }

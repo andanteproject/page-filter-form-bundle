@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Andante\PageFilterFormBundle\Tests\Functional;
 
 use Andante\PageFilterFormBundle\Exception\TargetCallableArgumentException;
-use Andante\PageFilterFormBundle\PageFilterManager;
-use Andante\PageFilterFormBundle\PageFilterManagerInterface;
 use Andante\PageFilterFormBundle\Tests\Form\DumbArrayByValuePageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbArrayPageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectIntersectionTypeHint1PageFilterType;
@@ -15,22 +15,14 @@ use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint1PageFilterTy
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint2PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHint3PageFilterType;
 use Andante\PageFilterFormBundle\Tests\Form\DumbObjectWrongTypeHintNoNullableArgs2PageFilterType;
-use Andante\PageFilterFormBundle\Tests\KernelTestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class PageFilterManagerTest extends KernelTestCase
+class PageFilterManagerTest extends BaseFunctionalTest
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        self::bootKernel();
-    }
-
     public function testCreateAndHandleFilterWithObject(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $fakeQueryBuilder->criteriaSearch2 = null;
@@ -49,8 +41,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithObjectNullArgs(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $fakeQueryBuilder->criteriaSearch2 = null;
@@ -69,8 +60,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithObjectNullArgsWithNoNullableArgs2(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $fakeQueryBuilder->criteriaSearch2 = null;
@@ -88,8 +78,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithObjectNotEnoughParameters(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $this->expectException(TargetCallableArgumentException::class);
@@ -105,8 +94,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithObjectWrongTypeHint1(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $this->expectException(TargetCallableArgumentException::class);
@@ -122,8 +110,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithObjectWrongTypeHint2(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $this->expectException(TargetCallableArgumentException::class);
@@ -140,8 +127,7 @@ class PageFilterManagerTest extends KernelTestCase
     public function testCreateAndHandleFilterWithObjectUnionTypeHint1(): void
     {
         if (\version_compare(PHP_VERSION, '8.0.0') >= 0) {
-            /** @var PageFilterManagerInterface $filterManager */
-            $filterManager = self::getContainer()->get(PageFilterManager::class);
+            $filterManager = $this->getPageFilterManager();
             $fakeQueryBuilder = new \stdClass();
             $this->expectException(TargetCallableArgumentException::class);
             $this->expectExceptionMessage('argument type-hinted');
@@ -160,8 +146,7 @@ class PageFilterManagerTest extends KernelTestCase
     public function testCreateAndHandleFilterWithObjectIntersectionTypeHint1(): void
     {
         if (\version_compare(PHP_VERSION, '8.1.0') >= 0) {
-            /** @var PageFilterManagerInterface $filterManager */
-            $filterManager = self::getContainer()->get(PageFilterManager::class);
+            $filterManager = $this->getPageFilterManager();
             $fakeQueryBuilder = new \stdClass();
             $this->expectException(TargetCallableArgumentException::class);
             $this->expectExceptionMessage('argument type-hinted');
@@ -179,8 +164,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithObjectWrongTypeHint3(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $fakeQueryBuilder = new \stdClass();
         $fakeQueryBuilder->criteriaSearch1 = null;
         $this->expectException(TargetCallableArgumentException::class);
@@ -196,8 +180,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithArray(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $array = [
             'criteriaSearch1' => null,
             'criteriaSearch2' => null,
@@ -217,8 +200,7 @@ class PageFilterManagerTest extends KernelTestCase
 
     public function testCreateAndHandleFilterWithArrayByValue(): void
     {
-        /** @var PageFilterManagerInterface $filterManager */
-        $filterManager = self::getContainer()->get(PageFilterManager::class);
+        $filterManager = $this->getPageFilterManager();
         $array = [
             'criteriaSearch1' => null,
         ];

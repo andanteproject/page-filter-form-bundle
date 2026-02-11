@@ -10,7 +10,8 @@
         "filters",
         "php",
         "php7",
-        "php74"
+        "php74",
+        "php8"
     ],
     "type": "symfony-bundle",
     "license": "MIT",

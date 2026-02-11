@@ -1,0 +1,16 @@
+services:
+    php74:
+        environment:
+            XDEBUG_MODE: develop,debug
+            XDEBUG_CLIENT_HOST: host.docker.internal
+            XDEBUG_CLIENT_PORT: 9090
+            PHP_IDE_CONFIG: serverName=andanteproject-page-filter-form-bundle
+            XDEBUG_START_WITH_REQUEST: yes
+
+    php85:
+        environment:
+            XDEBUG_MODE: develop,debug
+            XDEBUG_CLIENT_HOST: host.docker.internal
+            XDEBUG_CLIENT_PORT: 9091
+            PHP_IDE_CONFIG: serverName=andanteproject-page-filter-form-bundle
+            XDEBUG_START_WITH_REQUEST: yes

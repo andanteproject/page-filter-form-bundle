@@ -22,7 +22,10 @@ class AndantePageFilterFormExtension extends Extension
             new Definition(PageFilterManager::class)
         );
         $filterManagerDefinition->addArgument(new Reference('form.factory'));
-        $container->setAlias(PageFilterManagerInterface::class, 'andante_page_filter_form.page_filter_manager');
+        $filterManagerDefinition->setPublic(true);
+
+        $container->setAlias(PageFilterManagerInterface::class, 'andante_page_filter_form.page_filter_manager')
+            ->setPublic(true);
 
         $container
             ->setDefinition(

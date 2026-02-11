@@ -1,0 +1,26 @@
+services:
+    php74:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile.php74
+        volumes:
+            - .:/var/www/html
+        environment:
+            XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug}
+            XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST:-host.docker.internal}
+            XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT:-9090}
+            PHP_IDE_CONFIG: ${PHP_IDE_CONFIG:-serverName=andanteproject-page-filter-form-bundle}
+            XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST:-yes}
+
+    php85:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile.php85
+        volumes:
+            - .:/var/www/html
+        environment:
+            XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug}
+            XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST:-host.docker.internal}
+            XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT:-9090}
+            PHP_IDE_CONFIG: ${PHP_IDE_CONFIG:-serverName=andanteproject-page-filter-form-bundle}
+            XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST:-yes}

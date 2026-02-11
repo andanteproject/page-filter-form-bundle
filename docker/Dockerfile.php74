@@ -1,0 +1,45 @@
+FROM php:7.4-fpm-alpine
+
+# Install dependencies
+RUN apk add --no-cache \
+    git \
+    unzip \
+    libzip-dev \
+    icu-dev \
+    libpq-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    autoconf \
+    gcc \
+    g++ \
+    make \
+    linux-headers \
+    && docker-php-ext-install \
+    pdo_mysql \
+    zip \
+    intl \
+    pdo_pgsql \
+    mbstring \
+    soap \
+    xml \
+    && docker-php-ext-enable \
+    pdo_mysql \
+    zip \
+    intl \
+    pdo_pgsql \
+    mbstring \
+    soap \
+    xml
+
+# Install Xdebug (3.1.x for PHP 7.4)
+RUN pecl install xdebug-3.1.6 \
+    && docker-php-ext-enable xdebug
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY docker/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+WORKDIR /var/www/html
+
+CMD ["php-fpm"]
